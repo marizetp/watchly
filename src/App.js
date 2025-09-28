@@ -50,37 +50,70 @@ const tempWatchedData = [
 const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
-export default function App() {
-  const [query, setQuery] = useState("");
-  const [movies, setMovies] = useState(tempMovieData);
-  const [watched, setWatched] = useState(tempWatchedData);
-  const [isOpen1, setIsOpen1] = useState(true);
-  const [isOpen2, setIsOpen2] = useState(true);
 
-  const avgImdbRating = average(watched.map((movie) => movie.imdbRating));
-  const avgUserRating = average(watched.map((movie) => movie.userRating));
-  const avgRuntime = average(watched.map((movie) => movie.runtime));
-
-  return (
-    <>
-      <nav className="nav-bar">
+function Logo (){
+  return <>
         <div className="logo">
           <span role="img">🍿</span>
           <h1>Watchly</h1>
         </div>
-        <input
+  </>
+}
+
+function Search(){
+  const [query, setQuery] = useState("");
+  return <>
+    <input
           className="search"
           type="text"
           placeholder="Search movies..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
-        <p className="num-results">
-          Found <strong>{movies.length}</strong> results
-        </p>
-      </nav>
+        
+  </>
+}
 
-      <main className="main">
+function Results(){
+  return <>
+        <p className="num-results">
+          Found <strong>x</strong> results
+        </p>
+  </>
+}
+
+function Nav (){
+  
+  return <>
+    <nav className="nav-bar">
+        <Logo/>
+        <Search/>
+        <Results/>
+  
+      </nav>
+  </>
+  
+}
+
+
+function Main (){
+
+  return <>
+    <main className="main">
+        <ListBox/>
+        <WatchedBox/>
+        
+      </main>
+  </>
+}
+
+
+
+function ListBox(){
+
+  const [isOpen1, setIsOpen1] = useState(true);
+  
+  return <>
         <div className="box">
           <button
             className="btn-toggle"
@@ -88,10 +121,18 @@ export default function App() {
           >
             {isOpen1 ? "–" : "+"}
           </button>
-          {isOpen1 && (
-            <ul className="list">
-              {movies?.map((movie) => (
-                <li key={movie.imdbID}>
+          {isOpen1 && ( <MovieList/>
+            
+          )}
+        </div>
+  
+  </>
+}
+
+function Movie({movie}){
+  
+  return <>
+         <li >
                   <img src={movie.Poster} alt={`${movie.Title} poster`} />
                   <h3>{movie.Title}</h3>
                   <div>
@@ -100,22 +141,30 @@ export default function App() {
                       <span>{movie.Year}</span>
                     </p>
                   </div>
-                </li>
+          </li>
+  </>
+}
+function MovieList(){
+  const [movies, setMovies] = useState(tempMovieData);
+  return<>
+    <ul className="list">
+              {movies?.map((movie) => (
+                <Movie movie={movie} key={movie.imdbID}/>
               ))}
-            </ul>
-          )}
-        </div>
+       </ul>
+  
+  </>
+}
 
-        <div className="box">
-          <button
-            className="btn-toggle"
-            onClick={() => setIsOpen2((open) => !open)}
-          >
-            {isOpen2 ? "–" : "+"}
-          </button>
-          {isOpen2 && (
-            <>
-              <div className="summary">
+
+function Summary ({watched}){
+
+  const avgImdbRating = average(watched.map((movie) => movie.imdbRating));
+  const avgUserRating = average(watched.map((movie) => movie.userRating));
+  const avgRuntime = average(watched.map((movie) => movie.runtime));
+
+  return<>
+    <div className="summary">
                 <h2>Movies you watched</h2>
                 <div>
                   <p>
@@ -136,10 +185,50 @@ export default function App() {
                   </p>
                 </div>
               </div>
+  </>
+}
 
-              <ul className="list">
+
+function WatchedList({watched}){
+  return <>
+    <ul className="list">
                 {watched.map((movie) => (
-                  <li key={movie.imdbID}>
+                  <WatchedMovie movie={movie} key={movie.imdbID}/>
+                ))}
+              </ul>
+  </>
+}
+
+function WatchedBox(){
+
+  const [watched, setWatched] = useState(tempWatchedData);
+ 
+  const [isOpen2, setIsOpen2] = useState(true);
+
+  
+  return <>
+    <div className="box">
+          <button
+            className="btn-toggle"
+            onClick={() => setIsOpen2((open) => !open)}
+          >
+            {isOpen2 ? "–" : "+"}
+          </button>
+          {isOpen2 && (
+            <>
+              <Summary watched={watched}/>
+              <WatchedList watched={watched} />
+              
+            </>
+          )}
+        </div>
+  
+  </>
+}
+
+function WatchedMovie({movie}){
+  return <>
+    <li >
                     <img src={movie.Poster} alt={`${movie.Title} poster`} />
                     <h3>{movie.Title}</h3>
                     <div>
@@ -157,12 +246,17 @@ export default function App() {
                       </p>
                     </div>
                   </li>
-                ))}
-              </ul>
-            </>
-          )}
-        </div>
-      </main>
+  </>
+}
+
+export default function App() {
+
+  return (
+    <>
+      <Nav/>
+      <Main/>
+
+      
     </>
   );
 }
