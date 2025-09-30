@@ -74,21 +74,20 @@ function Search(){
   </>
 }
 
-function Results(){
+function Results({movies}){
   return <>
         <p className="num-results">
-          Found <strong>x</strong> results
+          Found <strong>{movies.length}</strong> results
         </p>
   </>
 }
 
-function Nav (){
+function Nav ({children}){
   
   return <>
     <nav className="nav-bar">
-        <Logo/>
-        <Search/>
-        <Results/>
+      {children}
+        
   
       </nav>
   </>
@@ -96,12 +95,11 @@ function Nav (){
 }
 
 
-function Main (){
+function Main ({children}){
 
   return <>
     <main className="main">
-        <ListBox/>
-        <WatchedBox/>
+      {children}
         
       </main>
   </>
@@ -109,19 +107,19 @@ function Main (){
 
 
 
-function ListBox(){
+function Box({children}){
 
-  const [isOpen1, setIsOpen1] = useState(true);
+  const [isOpen, setIsOpen] = useState(true);
   
   return <>
         <div className="box">
           <button
             className="btn-toggle"
-            onClick={() => setIsOpen1((open) => !open)}
+            onClick={() => setIsOpen((open) => !open)}
           >
-            {isOpen1 ? "–" : "+"}
+            {isOpen ? "–" : "+"}
           </button>
-          {isOpen1 && ( <MovieList/>
+          {isOpen && ( children
             
           )}
         </div>
@@ -144,8 +142,8 @@ function Movie({movie}){
           </li>
   </>
 }
-function MovieList(){
-  const [movies, setMovies] = useState(tempMovieData);
+function MovieList({movies}){
+  
   return<>
     <ul className="list">
               {movies?.map((movie) => (
@@ -199,6 +197,8 @@ function WatchedList({watched}){
   </>
 }
 
+/*
+
 function WatchedBox(){
 
   const [watched, setWatched] = useState(tempWatchedData);
@@ -216,6 +216,7 @@ function WatchedBox(){
           </button>
           {isOpen2 && (
             <>
+
               <Summary watched={watched}/>
               <WatchedList watched={watched} />
               
@@ -225,6 +226,8 @@ function WatchedBox(){
   
   </>
 }
+
+*/
 
 function WatchedMovie({movie}){
   return <>
@@ -250,11 +253,25 @@ function WatchedMovie({movie}){
 }
 
 export default function App() {
-
+  const [movies, setMovies] = useState(tempMovieData);
+  const [watched, setWatched] = useState(tempWatchedData);
+ 
   return (
     <>
-      <Nav/>
-      <Main/>
+      <Nav>
+        <Logo/>
+        <Search/>
+        <Results movies={movies}/>
+      </Nav>
+      <Main >
+        <Box>
+          <MovieList movies={movies}/>
+        </Box>
+        <Box>
+            <Summary watched={watched}/>
+            <WatchedList watched={watched} />
+        </Box>
+      </Main>
 
       
     </>
