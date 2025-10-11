@@ -60,8 +60,8 @@ function Logo (){
   </>
 }
 
-function Search(){
-  const [query, setQuery] = useState("");
+function Search({query, setQuery}){
+  
   return <>
     <input
           className="search"
@@ -267,16 +267,18 @@ function ErrorMessage({message}){
 }
 
 export default function App() {
+  const [query, setQuery] = useState("");
   const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState([]);
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
-  const query = 'dsdgae'
+  const tempQuery = 'naruto'
 
   useEffect(function(){
     async function fetchMovies () {
       try{
           setIsLoading(true)
+          setError('')
           const res = await fetch(`http://www.omdbapi.com/?apikey=${KEY}&s=${query}`)
 
           if (!res.ok) throw new Error('Something went wrong!');
@@ -295,8 +297,14 @@ export default function App() {
       
     }
 
+    if (!query.length){
+      setMovies([]);
+      setError('');
+      return
+    }
+
     fetchMovies()
-  }, [])
+  }, [query])
 
   
  
@@ -304,7 +312,7 @@ export default function App() {
     <>
       <Nav>
         <Logo/>
-        <Search/>
+        <Search query={query} setQuery={setQuery}/>
         <Results movies={movies}/>
       </Nav>
       <Main >
