@@ -229,6 +229,12 @@ function WatchedBox(){
 
 */
 
+function Loader(){
+  return <>
+    <p className="loader"> Loading...</p>
+  </>
+}
+
 function WatchedMovie({movie}){
   return <>
     <li >
@@ -257,14 +263,16 @@ const KEY = '53cbbe1f'
 export default function App() {
   const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState([]);
+  const [isLoading, setIsLoading] = useState(false)
   const query = 'naruto'
 
   useEffect(function(){
     async function fetchMovies () {
+      setIsLoading(true)
       const res = await fetch(`http://www.omdbapi.com/?apikey=${KEY}&s=${query}`)
       const data = await res.json()
       setMovies(data.Search)
-      
+      setIsLoading(false)
     }
 
     fetchMovies()
@@ -281,7 +289,7 @@ export default function App() {
       </Nav>
       <Main >
         <Box>
-          <MovieList movies={movies}/>
+          {isLoading? <Loader/> : <MovieList movies={movies}/>}
         </Box>
         <Box>
             <Summary watched={watched}/>
